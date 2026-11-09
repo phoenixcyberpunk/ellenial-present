@@ -263,7 +263,9 @@ function footer() {
       h('p', null, h('a', { href: 'https://ellenial.app', text: tx('An Ellenial tool') }), ' · ',
         h('a', { href: 'https://github.com/phoenixcyberpunk/ellenial-present', text: tx('Source') }), ' · ',
         h('a', { href: 'https://ellenial.app/thanks', text: tx('Thanks') }))),
-    window.EllenialLang ? h('div', { class: 'ell-controls' }, h('button', { class: 'chip-btn', type: 'button', lang: window.EllenialLang.other, 'aria-label': window.EllenialLang.otherAria, onclick: () => window.EllenialLang.set(window.EllenialLang.other) }, window.EllenialLang.otherLabel)) : null);
+    h('div', { class: 'ell-controls' },
+      window.EllenialLang ? h('button', { class: 'chip-btn', type: 'button', lang: window.EllenialLang.other, 'aria-label': window.EllenialLang.otherAria, onclick: () => window.EllenialLang.set(window.EllenialLang.other) }, window.EllenialLang.otherLabel) : null,
+      themeSwitch()));
 }
 
 /* ---------------- views ---------------- */
@@ -302,7 +304,7 @@ function renderHome() {
   });
 
   app.replaceChildren(h('div', { class: 'page home' },
-    topBar(brand()),
+    topBar(brand(), false),
     h('div', { class: 'home-grid' },
       h('div', { class: 'home-main' },
         h('p', { class: 'lead', text: tx('Show your slides on any TV, without a cable, an account or PowerPoint.') }),

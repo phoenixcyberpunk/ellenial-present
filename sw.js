@@ -2,7 +2,7 @@
    from this cache, so Present works on a venue's bad Wi-Fi. Files people open are never cached:
    they're read straight from the device and never pass through here.
    Bump VERSION whenever any file changes, so phones pick up the new one. */
-var VERSION = 'present-v4';
+var VERSION = 'present-v5';
 var FILES = [
   './',
   'index.html',
