@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Present · Ellenial</title>
+<meta name="description" content="Show a PowerPoint, PDF or pictures on any TV, without a cable, an account or PowerPoint. Nothing is uploaded, nothing is saved.">
+<meta name="theme-color" content="#FEF2E2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17141F" media="(prefers-color-scheme: dark)">
+<meta name="robots" content="noindex">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Present">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<script src="/ellenial-theme.js" data-light="#FEF2E2" data-dark="#17141F" data-key="ep:theme-pref"></script>
+<link rel="preload" href="/fonts/fraunces-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/dm-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/ellenial-help.css">
+</head>
+<body>
+<main id="app"></main>
+<div id="stage" class="stage" hidden></div>
+<video id="keep-awake" src="/media/keep-awake.mp4" muted playsinline loop preload="auto" aria-hidden="true" tabindex="-1"></video>
+<noscript><p style="padding:20px">Present needs JavaScript. / Present behöver JavaScript.</p></noscript>
+<script src="/lang.js"></script>
+<script src="/ellenial-help.js" defer></script>
+<script src="/app.js" type="module"></script>
+</body>
+</html>

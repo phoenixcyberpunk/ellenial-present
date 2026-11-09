@@ -1,0 +1,16 @@
+{
+  "name": "Present · Ellenial",
+  "short_name": "Present",
+  "description": "Show a PowerPoint, PDF or pictures on any TV. Nothing is uploaded, nothing is saved.",
+  "lang": "en",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#17141F",
+  "theme_color": "#342E86",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
