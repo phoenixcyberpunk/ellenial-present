@@ -58,7 +58,7 @@
     'Free · no ads · no trackers': 'Gratis · inga annonser · inga trackers',
     'In this app: a simple visit counter': 'I den här appen: en enkel besöksräknare',
     'An Ellenial tool': 'Ett Ellenial-verktyg',
-    'Source': 'Källkod',
+    'Source': 'GitHub',
     'Thanks': 'Tack',
     'An Ellenial app': 'En Ellenial-app',
     'Open source': 'Öppen källkod',
