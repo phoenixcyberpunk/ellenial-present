@@ -1,6 +1,6 @@
 # Present · Project Guide
 
-Read this first in every session. Present is an Ellenial app: open a PowerPoint, PDF or pictures in the browser and show them full screen, so a cable or the device's own mirroring puts them on a TV. Project notes live in the claude.ai Project "Ellenial Present", doc `ellenial-idea-present.md` (idea, mock-up, decisions, log). Linked on ellenial.app as Alpha since 9 Nov, 20:42, with a dotted outline on the library card until Ellen draws the icon.
+Read this first in every session. Present is an Ellenial app: open a PowerPoint, PDF or pictures in the browser and show them full screen, so a cable or the device's own mirroring puts them on a TV. Project notes live in the claude.ai Project "Ellenial Present", doc `ellenial-idea-present.md` (idea, mock-up, decisions, log). Linked on ellenial.app as Alpha since 9 Nov, 20:42, with Ellen's drawn icon on the library card since 9 Nov.
 
 ## Infrastructure
 - **Code:** GitHub `phoenixcyberpunk/ellenial-present` (public, AGPL-3.0).
@@ -16,7 +16,7 @@ Read this first in every session. Present is an Ellenial app: open a PowerPoint,
 - **No stay-on screen** (Ellen, 9 Nov, 20:10: "just remove it"). It was built at 09:05 (Screen Wake Lock from the first tap plus a muted-video fallback) and removed because it "works a little too well". The screen follows the device's own sleep and lock settings. Still true: never simulate input, never suggest mouse jigglers or other ways around a lock, no nudges to "use presentation mode" (09:50: "lock screens are automatic for a reason").
 - Presenting: black stage, slide letterboxed, controls fade after 2 s. Right half = next, left half = back, swipe, arrows, PageUp/PageDown (clickers), Space, Home/End, F full screen, B or . black screen, Esc leaves full screen then ends. End goes back to the "Ready" view with the file still open.
 - Closed-source `pptx-preview` was tried and rejected: it doesn't fit an open-source app.
-- Icon: placeholder (a plain screen glyph on slate #D6D9E0) until Ellen draws one. Tile colour not decided.
+- Icon: Ellen's drawing (9 Nov: a phone and a big screen with ticks, an arrow between them) on the Ellenial tile: cream #FFFBF5 square, apricot circle #F6D2BF. Same as the card on ellenial.app; original in the ellenial repo, art/drawings/present.png. Maskable icon has the circle and drawing at 80% for the safe zone.
 - Languages: English (main) and Swedish (`lang.js`, keyed by English). The app is called Present in both.
 - **Visit counter** (9 Nov, 20:10, before linking on ellenial.app): `visit-counter.js`, copied from ellenial.app's. One +1 per device per Stockholm day, only on present.ellenial.app, no id or cookie. Server: `public.present_count_visit()` in the shared Supabase project (gillefeeling, `knvrvmqdxvcatsrvkrgx`), schema `ellenial_present`, migration `present_daily_visits`, same as Quiz/Poll/Bingo. The CSP's `connect-src` allows only that Supabase host. Footer says so.
 
