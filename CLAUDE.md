@@ -1,6 +1,6 @@
 # Present · Project Guide
 
-Read this first in every session. Present is an Ellenial app: open a PowerPoint, PDF or pictures in the browser and show them full screen, so a cable or the device's own mirroring puts them on a TV. Project notes live in the claude.ai Project "Ellenial - Brand identity - Master", doc `claude/ellenial-idea-present.md` (idea, mock-up, decisions).
+Read this first in every session. Present is an Ellenial app: open a PowerPoint, PDF or pictures in the browser and show them full screen, so a cable or the device's own mirroring puts them on a TV. Project notes live in the claude.ai Project "Ellenial Present", doc `ellenial-idea-present.md` (idea, mock-up, decisions, log). Linked on ellenial.app as Alpha since 9 Nov, 20:42, with a dotted outline on the library card until Ellen draws the icon.
 
 ## Infrastructure
 - **Code:** GitHub `phoenixcyberpunk/ellenial-present` (public, AGPL-3.0).
