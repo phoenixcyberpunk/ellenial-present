@@ -2,7 +2,7 @@
    from this cache, so Present works on a venue's bad Wi-Fi. Files people open are never cached:
    they're read straight from the device and never pass through here.
    Bump VERSION whenever any file changes, so phones pick up the new one. */
-var VERSION = 'present-v3';
+var VERSION = 'present-v4';
 var FILES = [
   './',
   'index.html',
@@ -15,6 +15,7 @@ var FILES = [
   'ellenial-help.js',
   'ellenial-help.css',
   'fonts/fraunces-latin-600-normal.woff2',
+  'fonts/fraunces-latin-400-italic.woff2',
   'fonts/dm-sans-latin-400-normal.woff2',
   'fonts/dm-sans-latin-500-normal.woff2',
   'fonts/dm-sans-latin-700-normal.woff2',

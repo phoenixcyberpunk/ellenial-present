@@ -252,14 +252,18 @@ function brand() {
     h('div', { class: 'brand-words' }, h('span', { class: 'eyebrow', text: 'Ellenial' }), h('h1', { text: tx('Present') })));
 }
 
+// The shared Ellenial footer (9 Nov 2026): Present's own line on top, then the same block as every app.
 function footer() {
-  return h('footer', { class: 'foot' },
-    h('p', null, tx('Your file is never uploaded or saved.'), ' ',
-      h('a', { href: 'https://ellenial.app/drawings', text: tx('Drawn') }), ' ', tx('and designed by me, coded with the help of AI.')),
-    h('p', null, h('a', { href: 'https://ellenial.app', text: tx('An Ellenial app') }), ' · ',
-      h('a', { href: 'https://github.com/phoenixcyberpunk/ellenial-present', text: tx('Open source') })),
-    h('p', null, tx('On this page: an automatic counter shows the number of unique visits, anonymously of course.')),
-    window.EllenialLang ? h('button', { class: 'chip-btn', type: 'button', lang: window.EllenialLang.other, 'aria-label': window.EllenialLang.otherAria, onclick: () => window.EllenialLang.set(window.EllenialLang.other) }, window.EllenialLang.otherLabel) : null);
+  return h('footer', { class: 'ell-foot' },
+    h('div', { class: 'ell-notes' }, h('p', null, tx('Your file is never uploaded or saved.'))),
+    h('div', { class: 'ell-shared' },
+      h('p', null, h('a', { href: 'https://ellenial.app/drawings', text: tx('Drawn') }), ' ', tx('and designed by me, coded with the help of AI.')),
+      h('p', null, tx('Free · no ads · no trackers')),
+      h('p', null, tx('In this app: a simple visit counter')),
+      h('p', null, h('a', { href: 'https://ellenial.app', text: tx('An Ellenial tool') }), ' · ',
+        h('a', { href: 'https://github.com/phoenixcyberpunk/ellenial-present', text: tx('Source') }), ' · ',
+        h('a', { href: 'https://ellenial.app/thanks', text: tx('Thanks') }))),
+    window.EllenialLang ? h('div', { class: 'ell-controls' }, h('button', { class: 'chip-btn', type: 'button', lang: window.EllenialLang.other, 'aria-label': window.EllenialLang.otherAria, onclick: () => window.EllenialLang.set(window.EllenialLang.other) }, window.EllenialLang.otherLabel)) : null);
 }
 
 /* ---------------- views ---------------- */
