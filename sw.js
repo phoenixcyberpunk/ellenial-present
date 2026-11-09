@@ -2,13 +2,14 @@
    from this cache, so Present works on a venue's bad Wi-Fi. Files people open are never cached:
    they're read straight from the device and never pass through here.
    Bump VERSION whenever any file changes, so phones pick up the new one. */
-var VERSION = 'present-v1';
+var VERSION = 'present-v3';
 var FILES = [
   './',
   'index.html',
   'styles.css',
   'app.js',
   'lang.js',
+  'visit-counter.js',
   'manifest.webmanifest',
   'ellenial-theme.js',
   'ellenial-help.js',
@@ -21,7 +22,6 @@ var FILES = [
   'icons/icon-512.png',
   'icons/icon-maskable-512.png',
   'icons/apple-touch-icon.png',
-  'media/keep-awake.mp4',
   'vendor/pdfjs/pdf.min.mjs',
   'vendor/pdfjs/pdf.worker.min.mjs',
   'vendor/pptx-renderer/aiden0z-pptx-renderer.browser.es.js'

@@ -4,9 +4,8 @@
  * phone's own screen mirroring can put them on a TV. The file never leaves this device: it is read
  * here, drawn here, and dropped when the tab closes. No server, no account, nothing saved.
  *
- * The screen is kept awake from the first tap until the tab closes (Ellen, 9 Nov 2026): presenters
- * often talk first and forget to start presenting, and a locked room PC means someone runs over to
- * log in again. Screen Wake Lock where the browser has it, a tiny muted looping video where not.
+ * The screen follows the device's own sleep and lock settings (Ellen, 9 Nov 2026: the stay-on
+ * screen was removed; it worked a little too well).
  *
  * Libraries (served from this site, loaded only when needed): pdf.js (Apache-2.0) for PDFs and
  * @aiden0z/pptx-renderer (Apache-2.0) for PowerPoint files. See vendor/README.md.
@@ -51,81 +50,12 @@ const ICONS = {
   back: '<path d="M15 6l-6 6 6 6"/>',
   next: '<path d="M9 6l6 6-6 6"/>',
   play: '<path d="M8 5.5v13l10.5-6.5z"/>',
-  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
-  moon: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
   full: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
   close: '<path d="M6 6l12 12M18 6L6 18"/>'
 };
 function icon(name, size) {
   const s = size || 22;
   return h('span', { class: 'ic', 'aria-hidden': 'true', html: `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]}</svg>` });
-}
-
-/* ---------------- keeping the screen awake ---------------- */
-// Wanted from the first tap until the tab closes, unless the person turns it off on the chip.
-// Browsers drop a wake lock when the tab is hidden, so it is asked for again on return.
-
-const Awake = {
-  wanted: true,
-  lock: null,
-  video: document.getElementById('keep-awake'),
-  usingVideo: false,
-  listeners: new Set(),
-  get on() { return this.wanted && (!!this.lock || this.usingVideo); },
-  get supported() { return 'wakeLock' in navigator || !!(this.video && this.video.play); },
-  changed() { this.listeners.forEach((fn) => { try { fn(); } catch (e) { /* ignore */ } }); },
-  async request() {
-    if (!this.wanted || document.visibilityState !== 'visible') return;
-    if ('wakeLock' in navigator) {
-      if (this.lock || this.pending) return;
-      this.pending = true;
-      try {
-        const lock = await navigator.wakeLock.request('screen');
-        if (!this.wanted) { lock.release().catch(() => {}); return; } // turned off while asking
-        this.lock = lock;
-        this.lock.addEventListener('release', () => { this.lock = null; this.changed(); });
-        if (this.usingVideo && this.video) { this.video.pause(); this.usingVideo = false; } // the real lock is enough
-        this.changed();
-        return;
-      } catch (e) { /* not allowed yet (no tap) or refused: try the video */ } finally { this.pending = false; }
-    }
-    this.playVideo();
-  },
-  playVideo() {
-    const v = this.video;
-    if (!v || this.usingVideo) return;
-    const p = v.play();
-    if (p && p.then) p.then(() => { this.usingVideo = true; this.changed(); }).catch(() => {});
-  },
-  async release() {
-    if (this.lock) { try { await this.lock.release(); } catch (e) { /* ignore */ } this.lock = null; }
-    if (this.video && this.usingVideo) { this.video.pause(); this.usingVideo = false; }
-    this.changed();
-  },
-  setWanted(on) { this.wanted = on; on ? this.request() : this.release(); this.changed(); }
-};
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') { if (Awake.usingVideo) { Awake.usingVideo = false; } Awake.request(); }
-});
-// Safari only allows it after a tap, so every tap and key checks once more (cheap when already on).
-// The real wake lock is preferred: if only the video is running, a tap tries for the lock again.
-['pointerdown', 'keydown'].forEach((ev) => document.addEventListener(ev, () => {
-  if (Awake.wanted && !Awake.lock && (!Awake.usingVideo || 'wakeLock' in navigator)) Awake.request();
-}, { capture: true }));
-Awake.request();
-
-function awakeChip() {
-  const b = h('button', { class: 'awake-chip', type: 'button' });
-  function paint() {
-    b.setAttribute('aria-pressed', String(Awake.on));
-    b.innerHTML = '';
-    b.append(icon(Awake.on ? 'sun' : 'moon', 18), h('span', { text: Awake.on ? tx('Screen stays on') : Awake.wanted ? tx('Tap to keep the screen on') : tx('Screen may sleep') }));
-    b.title = Awake.on ? tx('Tap to let the screen sleep as usual') : tx('Tap to keep the screen on');
-  }
-  b.addEventListener('click', () => { Awake.setWanted(!Awake.on); });
-  Awake.listeners.add(paint);
-  paint();
-  return b;
 }
 
 /* ---------------- opening files ---------------- */
@@ -267,7 +197,9 @@ async function openPptx(file) {
     async preview(el) {
       const r = el.getBoundingClientRect();
       if (thumb) { try { thumb.dispose(); } catch (e) { /* ignore */ } }
-      thumb = viewer.renderThumbnailToContainer(0, el, { width: Math.round(r.width) || 480 });
+      // Fit the whole slide in the 16:9 box, so older 4:3 decks aren't cut off at the top.
+      const w = r.width && r.height ? Math.min(r.width, r.height * aspect) : r.width;
+      thumb = viewer.renderThumbnailToContainer(0, el, { width: Math.round(w) || 480 });
       if (thumb && thumb.ready) await thumb.ready;
     },
     async show(i) {
@@ -295,7 +227,7 @@ function themeSwitch() {
 const STEPS = () => [
   { title: tx('Choose your presentation'), text: tx('A PowerPoint, a PDF or pictures. It stays on your phone or computer. Nothing is uploaded.') },
   { title: tx('Put it on the screen'), text: tx('Cable? You’re set. No cable: Screen Mirroring on iPhone, iPad and Mac, Cast or Smart View on Android, Windows + K on Windows.') },
-  { title: tx('Present'), text: tx('Tap right for next, left for back, or use the arrow keys or a clicker. Your screen stays awake. Close the tab and it’s gone.') }
+  { title: tx('Present'), text: tx('Tap right for next, left for back, or use the arrow keys or a clicker. Close the tab and it’s gone.') }
 ];
 
 function helpButton() {
@@ -322,10 +254,11 @@ function brand() {
 
 function footer() {
   return h('footer', { class: 'foot' },
-    h('p', null, tx('Nothing is saved, nothing is tracked.'), ' ',
+    h('p', null, tx('Your file is never uploaded or saved.'), ' ',
       h('a', { href: 'https://ellenial.app/drawings', text: tx('Drawn') }), ' ', tx('and designed by me, coded with the help of AI.')),
     h('p', null, h('a', { href: 'https://ellenial.app', text: tx('An Ellenial app') }), ' · ',
       h('a', { href: 'https://github.com/phoenixcyberpunk/ellenial-present', text: tx('Open source') })),
+    h('p', null, tx('On this page: an automatic counter shows the number of unique visits, anonymously of course.')),
     window.EllenialLang ? h('button', { class: 'chip-btn', type: 'button', lang: window.EllenialLang.other, 'aria-label': window.EllenialLang.otherAria, onclick: () => window.EllenialLang.set(window.EllenialLang.other) }, window.EllenialLang.otherLabel) : null);
 }
 
@@ -386,8 +319,7 @@ function renderHome() {
           h('ol', null, STEPS().map((s, i) => h('li', null, h('span', { class: 'n', 'aria-hidden': 'true', text: String(i + 1) }), h('span', { class: 'step' }, h('strong', { text: s.title }), h('span', { text: s.text })))))),
         h('section', { class: 'card keys desk' },
           h('h2', { text: tx('Keys') }),
-          h('div', { class: 'keylist' }, [['→', tx('next')], ['←', tx('back')], ['F', tx('full screen')], ['B', tx('black screen')], ['Esc', tx('end')]].map(([k, t]) => h('span', null, h('kbd', { text: k }), ' ', t)))),
-        h('div', { class: 'awake-row' }, awakeChip()))),
+          h('div', { class: 'keylist' }, [['→', tx('next')], ['←', tx('back')], ['F', tx('full screen')], ['B', tx('black screen')], ['Esc', tx('end')]].map(([k, t]) => h('span', null, h('kbd', { text: k }), ' ', t)))))),
     footer()));
 }
 
@@ -410,7 +342,6 @@ function renderReady() {
         preview,
         h('p', { class: 'small muted count', text: `${doc.count} ${doc.count === 1 ? tx('slide') : tx('slides')}` })),
       h('div', { class: 'ready-side' },
-        awakeChip(),
         h('button', { class: 'btn big', type: 'button', onclick: () => startPresenting(0) }, icon('play'), tx('Start presenting')),
         h('p', { class: 'small muted', text: tx('Put your screen on the TV first: plug in the cable, or use Screen Mirroring or Cast.') }),
         h('p', { class: 'small muted phone-only', text: tx('Turn your phone sideways for the biggest slides.') }),
@@ -433,11 +364,9 @@ function controls() {
   next.addEventListener('click', (e) => { e.stopPropagation(); go(1); });
   const end = h('button', { class: 'end', type: 'button', onclick: (e) => { e.stopPropagation(); stopPresenting(); } }, tx('End'));
   const full = document.fullscreenEnabled ? h('button', { class: 'pill-btn', type: 'button', 'aria-label': tx('Full screen'), onclick: (e) => { e.stopPropagation(); toggleFull(); } }, icon('full', 18)) : null;
-  const chip = awakeChip();
-  chip.addEventListener('click', (e) => e.stopPropagation());
   return {
     el: h('div', { class: 'controls' },
-      h('div', { class: 'ctl-top' }, counter, h('div', { class: 'ctl-right' }, chip, full, end)),
+      h('div', { class: 'ctl-top' }, counter, h('div', { class: 'ctl-right' }, full, end)),
       prev, next,
       h('p', { class: 'ctl-hint', text: tx('Controls fade after 2 seconds · tap to show') })),
     counter
@@ -460,7 +389,6 @@ async function startPresenting(i) {
   app.setAttribute('inert', '');
   try { if (document.fullscreenEnabled && !document.fullscreenElement) await stage.requestFullscreen({ navigationUI: 'hide' }); } catch (e) { /* fine without */ }
   try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => {}); } catch (e) { /* ignore */ }
-  Awake.request();
   await paint();
   poke();
   stage.focus({ preventScroll: true });
@@ -563,4 +491,4 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
 }
 
 // For the browser tests only (never used by the page itself).
-window.__present = { Awake, get doc() { return doc; }, get view() { return view; }, get current() { return current; }, openFiles };
+window.__present = { get doc() { return doc; }, get view() { return view; }, get current() { return current; }, openFiles };
