@@ -2,7 +2,7 @@
    from this cache, so Present works on a venue's bad Wi-Fi. Files people open are never cached:
    they're read straight from the device and never pass through here.
    Bump VERSION whenever any file changes, so phones pick up the new one. */
-var VERSION = 'present-v7';
+var VERSION = 'present-v8';
 var FILES = [
   './',
   'index.html',
@@ -19,17 +19,17 @@ var FILES = [
   'fonts/dm-sans-latin-400-normal.woff2',
   'fonts/dm-sans-latin-500-normal.woff2',
   'fonts/dm-sans-latin-700-normal.woff2',
-  'icons/icon-192.png',
-  'icons/icon-512.png',
-  'icons/icon-maskable-512.png',
-  'icons/apple-touch-icon.png',
+  'icons/icon-192.png?v=2',
+  'icons/icon-512.png?v=2',
+  'icons/icon-maskable-512.png?v=2',
+  'icons/apple-touch-icon.png?v=2',
   'vendor/pdfjs/pdf.min.mjs',
   'vendor/pdfjs/pdf.worker.min.mjs',
   'vendor/pptx-renderer/aiden0z-pptx-renderer.browser.es.js'
 ];
 
 self.addEventListener('install', function (e) {
-  e.waitUntil(caches.open(VERSION).then(function (c) { return c.addAll(FILES); }).then(function () { return self.skipWaiting(); }));
+  e.waitUntil(caches.open(VERSION).then(function (c) { return c.addAll(FILES.map(function (f) { return new Request(f, { cache: 'reload' }); })); }).then(function () { return self.skipWaiting(); }));
 });
 
 self.addEventListener('activate', function (e) {

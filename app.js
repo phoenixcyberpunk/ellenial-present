@@ -248,7 +248,7 @@ function topBar(left, withTheme = true) {
 
 function brand() {
   return h('div', { class: 'brand' },
-    h('img', { src: '/icons/icon-192.png', alt: '', width: '44', height: '44' }),
+    h('img', { src: '/icons/icon-192.png?v=2', alt: '', width: '44', height: '44' }),
     h('div', { class: 'brand-words' }, h('span', { class: 'eyebrow', text: 'Ellenial' }), h('h1', { text: tx('Present') })));
 }
 
